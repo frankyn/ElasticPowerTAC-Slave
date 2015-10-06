@@ -3,6 +3,7 @@ from DigitalOceanAPIv2.docean import DOcean
 import subprocess
 import json
 import time
+import os
 
 '''
 	main.py
@@ -44,8 +45,10 @@ class ElasticPowerTAC_Slave:
     # start simulation scenarios
     def start_slave_simulations(self):
         # start simulation runner
-        run_cmd = ['su', 'log', '-c', 'python ~/ElasticPowerTAC-Simulation/simulation.py']
+        os.chdir('/home/log/ElasticPowerTAC-Simulation')
+        run_cmd = ['su', 'log', '-c', 'python simulation.py']
         subprocess.call(run_cmd)
+        os.chdir('/root/ElasticPowerTAC-Slave')
 
     # destroy slave :)
     def clean_up(self):
