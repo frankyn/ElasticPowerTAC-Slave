@@ -44,7 +44,7 @@ class ElasticPowerTAC_Slave:
     # start simulation scenarios
     def start_slave_simulations(self):
         # start simulation runner
-        run_cmd = ['runuser', '-l', 'log', '-c', '"~/ElasticPowerTAC-Simulation/simulation.py"']
+        run_cmd = ['su', 'log', '-c', 'python ~/ElasticPowerTAC-Simulation/simulation.py']
         subprocess.call(run_cmd)
 
     # destroy slave :)
@@ -54,12 +54,14 @@ class ElasticPowerTAC_Slave:
         print("goodbye....")
         self._docean.request_delete(self._config['droplet_id'])
 
-
 if __name__ == "__main__":
     # Initialize Setup
     elastic_powertac_slave = ElasticPowerTAC_Slave()
 
-    # Setup Master Environment
-    elastic_powertac_slave.setup_slave_environment()
+    # Setup Simulation Environment
+    elastic_powertac_slave.setup_slave_simulations()
+
+    # Start Simulations
+    elastic_powertac_slave.start_slave_simulations()
 
     elastic_powertac_slave.clean_up()
