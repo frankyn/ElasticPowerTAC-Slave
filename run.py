@@ -78,8 +78,8 @@ class ElasticPowerTAC_Slave:
     def clean_up(self):
         # start simulation cleanup
         # delete this slave
-        print("goodbye....")
-        self._docean.request_delete(self._config['droplet_id'])
+        #print("goodbye....")
+        #self._docean.request_delete(self._config['droplet_id'])
 
 if __name__ == "__main__":
     # Initialize Setup
