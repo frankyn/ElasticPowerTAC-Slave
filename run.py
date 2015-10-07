@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from DigitalOceanAPIv2.docean import DOcean
+from ElasticPowerTAC_GoogleDrivePlugin.googledrive_upload_wrapper import GoogleDriveUpload
 import subprocess
 import json
 import time
@@ -23,6 +24,11 @@ class ElasticPowerTAC_Slave:
 
         # store master ip
         self._docean = DOcean(self._config['api-key'])
+
+        # google drive
+        if self._config['google-drive']:
+            self._google_drive_session = 'google-session.json'
+
 
     # load_config
     def load_config(self):
@@ -49,6 +55,23 @@ class ElasticPowerTAC_Slave:
         run_cmd = ['su', 'log', '-c', 'python simulation.py']
         subprocess.call(run_cmd)
         os.chdir('/root/ElasticPowerTAC-Slave')
+
+        # simulations are complete by this point
+        if self._config['google-drive']:
+            self.backup_on_google_drive()
+
+    # backup on google drive
+    def backup_on_google_drive(self):
+        self._google_drive = GoogleDriveUpload('',self._google_drive_session)
+        # iterate through files in simulation location and upload tar.gz files
+        for filename in os.listdir('/home/log/ElasticPowerTAC-Simulation'):
+            if filename.find('tar.gz'):
+                self._google_drive.insert_file(filename,
+                                               filename,
+                                               self._config['google-drive']['parent-id'],
+                                               'application/x-gzip',
+                                               filename)
+
 
     # destroy slave :)
     def clean_up(self):
