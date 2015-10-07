@@ -64,14 +64,13 @@ class ElasticPowerTAC_Slave:
     def backup_on_google_drive(self):
         self._google_drive = GoogleDriveUpload('',self._google_drive_session)
         # iterate through files in simulation location and upload tar.gz files
-        path = '/home/log/ElasticPowerTAC-Simulation'
-        for filename in os.listdir(path):
-            if filename.find('tar.gz')>=0:
+        for filename in os.listdir('/home/log/ElasticPowerTAC-Simulation'):
+            if filename.find('tar.gz'):
                 self._google_drive.insert_file(filename,
                                                filename,
                                                self._config['google-drive']['parent-id'],
                                                'application/x-gzip',
-                                               '%s/%s'%(path,filename))
+                                               filename)
 
 
     # destroy slave :)
