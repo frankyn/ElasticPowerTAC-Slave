@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from DigitalOceanAPIv2.docean import DOcean
-from ElasticPowerTAC_GoogleDrivePlugin.googledrive_upload_wrapper import GoogleDriveUpload
+from ElasticPowerTAC_GoogleDrivePlugin.googledrive_wrapper import GoogleDriveAPIWrapper
 import subprocess
 import json
 import time
@@ -28,6 +28,7 @@ class ElasticPowerTAC_Slave:
         # google drive
         if self._config['google-drive']:
             self._google_drive_session = 'google-session.json'
+            self._google_drive = GoogleDriveAPIWrapper('',self._google_drive_session)
 
 
     # load_config
@@ -47,6 +48,7 @@ class ElasticPowerTAC_Slave:
     # setup slave environment
     def setup_slave_simulations(self):
         print("Slaves have been initialized!")
+        self.download_from_google_drive(self._config['simulations'])
 
     # start simulation scenarios
     def start_slave_simulations(self):
@@ -62,7 +64,6 @@ class ElasticPowerTAC_Slave:
 
     # backup on google drive
     def backup_on_google_drive(self):
-        self._google_drive = GoogleDriveUpload('',self._google_drive_session)
         # iterate through files in simulation location and upload tar.gz files
         path = '/home/log/ElasticPowerTAC-Simulation'
         for filename in os.listdir(path):
@@ -72,6 +73,16 @@ class ElasticPowerTAC_Slave:
                                                self._config['google-drive']['parent-id'],
                                                'application/x-gzip',
                                                '%s/%s'%(path,filename))
+
+    # download required simulation
+    def download_from_google_drive(self,simulations):
+        # Storage path
+        sim_path = '/home/log/ElasticPowerTAC-Simulation/scenarios/%s'
+        os.makedirs(sim_path%'')
+        for simulation in simulations:
+            self._google_drive.download_file(simulation['simulation-file-id'],
+                                            sim_path%simulation['simulation-file-name'])
+
 
 
     # destroy slave :)
