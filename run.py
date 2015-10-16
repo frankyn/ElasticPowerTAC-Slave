@@ -75,7 +75,7 @@ class ElasticPowerTAC_Slave:
                                                '%s/%s'%(path,filename))
 
     # move scenarios from root to log location
-    def setup_scenarios(self,simulations):
+    def setup_scenarios(self):
         # Location path
         run_mv = ['mv', 'scenarios', '/home/log/ElasticPowerTAC-Simulation/']
         subprocess.call(run_mv)
