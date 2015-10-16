@@ -7,9 +7,9 @@ import time
 import os
 
 '''
-	main.py
-		* Start simulation
-		* Delete Droplet after Completion
+    main.py
+        * Start simulation
+        * Delete Droplet after Completion
 
 '''
 
@@ -48,7 +48,7 @@ class ElasticPowerTAC_Slave:
     # setup slave environment
     def setup_slave_simulations(self):
         print("Slaves have been initialized!")
-        self.download_from_google_drive(self._config['simulations'])
+        self.setup_scenarios()
 
     # start simulation scenarios
     def start_slave_simulations(self):
@@ -74,14 +74,15 @@ class ElasticPowerTAC_Slave:
                                                'application/x-gzip',
                                                '%s/%s'%(path,filename))
 
-    # download required simulation
-    def download_from_google_drive(self,simulations):
-        # Storage path
-        sim_path = '/home/log/ElasticPowerTAC-Simulation/scenarios/%s'
-        os.makedirs(sim_path%'')
-        for simulation in simulations:
-            self._google_drive.download_file(simulation['simulation-file-id'],
-                                            sim_path%simulation['simulation-file-name'])
+    # move scenarios from root to log location
+    def setup_scenarios(self,simulations):
+        # Location path
+        run_mv = ['mv', 'scenarios', '/home/log/ElasticPowerTAC-Simulation/']
+        subprocess.call(run_mv)
+
+        run_chown = ['chown','log:log','/home/log/ElasticPowerTAC-Simulation/scenarios']
+        subprocess.call(run_chown)
+
 
 
 
